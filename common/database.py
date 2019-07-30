@@ -1,7 +1,7 @@
 import pymongo
 
 class Database(object):
-	URI = "mongodb://127.0.0.1:27017"
+	URI = "mongodb+srv://ankitdongre96@gmail.com:M0ngo123@mycluster-n3ig0.mongodb.net/test?retryWrites=true&w=majority"
 	DATABASE = None
 
 	@staticmethod
