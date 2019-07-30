@@ -1,5 +1,6 @@
 import pymongo
 
+
 class Database(object):
 	URI = "mongodb+srv://admin:ImvOdw1BTTE2ECIQ@new-smqyv.mongodb.net/test?retryWrites=true&w=majority"
 	DATABASE = None
