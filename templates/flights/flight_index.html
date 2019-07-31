@@ -55,15 +55,15 @@
         <div class="panel panel-info">
             <a href="{{ url_for('flights.flight_page', flight_id = flight._id) }}" class="list-group-item">
                 <div class="panel-heading">
-                    <h3 align="center" class="list-group-item-heading">{{ flight.plane_no }} <small> (Flight name)</small></h3></div>
+                    <h3 align="center" class="list-group-item-heading">{{ flight.event_name }} <small> (Event name)</small></h3></div>
             </a>
             <div class="panel-body">
-                <p align="center" class="list-group-item-text">Source: {{ flight.source }}</p>
-                <p align="center" class="list-group-item-text">Destination: {{ flight.destination }}</p>
-                <p align="center" class="list-group-item-text">Plane Timing: {{ flight.plane_timing }}</p>
+            
+                <p align="center" class="list-group-item-text">Location: {{ flight.location }}</p>
+                <p align="center" class="list-group-item-text">Event Timing: {{ flight.event_time }}</p>
                 <p align="center" class="list-group-item-text">Total Seats: {{ flight.total_seats }}</p>
-                <p align="center" class="list-group-item-text">Airline Name: {{ flight.airline_name }}</p>
-                <p align="center" class="list-group-item-text">Cost: Rs.{{ flight.price }}</p>
+                <p align="center" class="list-group-item-text">Event Name: {{ flight.event_name }}</p>
+                <p align="center" class="list-group-item-text">Cost: {{ flight.price }} Euro</p>
                 <br> 
                 {% if session['email'] %}
                 <div align="center"><a class="btn btn-info" href="{{ url_for('flights.flight_book', flight_id = flight._id) }}">Book</a></div>

@@ -1,1 +1,1 @@
-COLLECTION = "flights"
+COLLECTION = "events"

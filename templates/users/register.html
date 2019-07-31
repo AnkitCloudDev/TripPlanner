@@ -29,7 +29,7 @@
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li><a href="{{ url_for('hotels.index') }}">Hotels</a></li>
-                    <li><a href="{{ url_for('flights.index') }}">Flights</a></li>
+                    <li><a href="{{ url_for('flights.index') }}">Events</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li><a href="{{ url_for('home') }}">Home</a></li>
@@ -66,9 +66,6 @@
                             <br>
                             <label for="ph_no">Phone Number</label>
                             <input type="text" class="form-control" id="ph_no" name="ph_no" placeholder="Phone Number" maxlength="10" required>
-                            <br>
-                            <label for="card_no">Card Number</label>
-                            <input type="text" class="form-control" id="card_no" name="card_no" placeholder="Card Number" maxlength="16" required>
                             <br>
                             <button type="submit" class="btn btn-success btn-block">Sign up</button>
                         </fieldset>

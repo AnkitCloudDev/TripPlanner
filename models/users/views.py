@@ -24,6 +24,21 @@ def login_user():
 	return render_template("users/login.html")
 
 @user_blueprint.route('/register', methods=['GET', 'POST'])
+# def register_user():
+# 	if request.method == 'POST':
+# 		name = request.form['name']
+# 		email = request.form['email']
+# 		password = request.form['password']
+# 		address = request.form['address']
+# 		ph_no = request.form['ph_no']
+# 		card_no = request.form['card_no']
+# 		try:
+# 			if User.register_user(email, password, name, address, ph_no, card_no):
+# 				session['email'] = email
+# 				return redirect(url_for(".user_dashboard"))
+# 		except UserErrors.UserError as e:
+# 			return e.message
+# 	return render_template("users/register.html")
 def register_user():
 	if request.method == 'POST':
 		name = request.form['name']
@@ -31,14 +46,13 @@ def register_user():
 		password = request.form['password']
 		address = request.form['address']
 		ph_no = request.form['ph_no']
-		card_no = request.form['card_no']
 		try:
-			if User.register_user(email, password, name, address, ph_no, card_no):
+			if User.register_user(email, password, name, address, ph_no):
 				session['email'] = email
 				return redirect(url_for(".user_dashboard"))
 		except UserErrors.UserError as e:
 			return e.message
-	return render_template("users/register.html")
+	return render_template("users/register.html")	
 
 @user_blueprint.route('/dashboard')
 def user_dashboard():

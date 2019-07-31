@@ -26,22 +26,34 @@ def delete_hotel(hotel_id):
 
 @hotel_blueprint.route('/new', methods=['GET', 'POST'])
 @user_decorators.requires_admin_permissions
+# def create_hotel():
+# 	if request.method == 'POST':
+# 		name = request.form['name']
+# 		email = request.form['email']
+# 		password = request.form['password']
+# 		address = request.form['address']
+# 		ph_no = request.form['ph_no']
+# 		card_no = request.form['card_no']
+# 		total_rooms = request.form['total_rooms']
+# 		rooms_booked = request.form['rooms_booked']
+# 		price = request.form['price']
+
+# 		Hotel(name, email, password, address, ph_no, card_no, total_rooms,rooms_booked, price).save_to_mongo()
+# 		return redirect(url_for('.index'))
+# 	return render_template('hotels/new_hotel.html')
 def create_hotel():
 	if request.method == 'POST':
 		name = request.form['name']
 		email = request.form['email']
 		password = request.form['password']
 		address = request.form['address']
-		ph_no = request.form['ph_no']
-		card_no = request.form['card_no']
 		total_rooms = request.form['total_rooms']
 		rooms_booked = request.form['rooms_booked']
 		price = request.form['price']
 
-		Hotel(name, email, password, address, ph_no, card_no, total_rooms,rooms_booked, price).save_to_mongo()
+		Hotel(name, email, password, address, ph_no, total_rooms,rooms_booked, price).save_to_mongo()
 		return redirect(url_for('.index'))
 	return render_template('hotels/new_hotel.html')
-
 @hotel_blueprint.route('/booking_hotel/<string:hotel_id>', methods=['GET', 'POST'])
 def hotel_book(hotel_id):
 	hotels = Hotel.get_by_id(hotel_id)

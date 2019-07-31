@@ -25,21 +25,32 @@ def load_flights(airline_name):
 
 @flight_blueprint.route('/add_flights', methods=['GET', 'POST'])
 @user_decorators.requires_login
+# def flight_add():
+# 	if request.method == 'POST':
+# 		plane_no = request.form['plane_no']
+# 		source = request.form['source']
+# 		destination = request.form['destination']
+# 		plane_timing = request.form['plane_timing']
+# 		total_seats = int(request.form['total_seats'])
+# 		seats_booked = int(request.form['seats_booked'])
+# 		airline_name = request.form['airline_name']
+# 		price = int(request.form['price'])
+
+# 		Flight(plane_no, source, destination, plane_timing, total_seats, seats_booked, airline_name, price).save_to_mongo()
+# 		return redirect(url_for(".index"))
+# 	return render_template('flights/new_flight.html')
 def flight_add():
 	if request.method == 'POST':
-		plane_no = request.form['plane_no']
-		source = request.form['source']
-		destination = request.form['destination']
-		plane_timing = request.form['plane_timing']
+		location = request.form['location']
+		event_time = request.form['event_time']
 		total_seats = int(request.form['total_seats'])
 		seats_booked = int(request.form['seats_booked'])
-		airline_name = request.form['airline_name']
+		event_name = request.form['event_name']
 		price = int(request.form['price'])
 
-		Flight(plane_no, source, destination, plane_timing, total_seats, seats_booked, airline_name, price).save_to_mongo()
+		Flight( location, event_time, total_seats, seats_booked, event_name, price, dates={}).save_to_mongo()
 		return redirect(url_for(".index"))
 	return render_template('flights/new_flight.html')
-
 @flight_blueprint.route('/delete/<string:flight_id>')
 @user_decorators.requires_login
 def delete_flight(flight_id):
@@ -50,13 +61,12 @@ def delete_flight(flight_id):
 def flight_book(flight_id):
 	flights = Flight.get_by_id(flight_id)
 	if request.method == 'POST':
-		plane_no = flights.plane_no
 		price = float(flights.price)
 		tickets = int(request.form['rooms'])
 		date_from = request.form['date-from']
 		total = price * tickets
-		airline_name = flights.airline_name
-		airline = Airline.get_by_name(airline_name)
+		event_name = flights.event_name
+		airline = Airline.get_by_name(event_name)
 
 		if flights.total_seats <= tickets:
 			try:
@@ -80,7 +90,7 @@ def flight_book(flight_id):
 		flights.save_to_mongo()
 		airline.save_to_mongo()
 		order = {
-			"Plane_no": plane_no,
+			"event_name":event_name,
 			"price": price,
 			"tickets": tickets,
 			"total": total

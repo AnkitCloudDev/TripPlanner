@@ -4,37 +4,56 @@ import uuid
 import models.flights.errors as UserErrors
 
 class Flight(object):
-	def __init__(self, plane_no, source, destination, plane_timing, total_seats, seats_booked, airline_name, price, dates={}, _id = None):
-		self.plane_no = plane_no
-		self.source = source
-		self.destination = destination
-		self.plane_timing = plane_timing
+	# def __init__(self, plane_no, source, destination, plane_timing, total_seats, seats_booked, airline_name, price, dates={}, _id = None):
+	# 	self.plane_no = plane_no
+	# 	self.source = source
+	# 	self.destination = destination
+	# 	self.plane_timing = plane_timing
+	# 	self.total_seats = int(total_seats)
+	# 	self.seats_booked = int(seats_booked)
+	# 	self.airline_name = airline_name
+	# 	self.price = price
+	# 	self.dates = dates
+	# 	self._id = uuid.uuid4().hex if _id is None else _id
+	def __init__(self, location, event_time, total_seats, seats_booked, event_name, price, dates={}, _id = None):
+		self.location = location
+		self.event_time = event_time
 		self.total_seats = int(total_seats)
 		self.seats_booked = int(seats_booked)
-		self.airline_name = airline_name
+		self.event_name = event_name
 		self.price = price
 		self.dates = dates
 		self._id = uuid.uuid4().hex if _id is None else _id
-
 	def __repr__(self):
-		return "<Plane: {} to {}>".format(self.plane_no, self.destination)
+		return "<Plane: {} to {}>".format(self.event_name, self.location)
 
 	def save_to_mongo(self):
 		Database.update(FlightConstants.COLLECTION, {"_id": self._id}, self.json())
 
+	# def json(self):
+	# 	return {
+	# 		"plane_no": self.plane_no,
+	# 		"source": self.source,
+	# 		"destination": self.destination,
+	# 		"plane_timing": self.plane_timing,
+	# 		"total_seats": self.total_seats,
+	# 		"seats_booked": self.seats_booked,
+	# 		"airline_name": self.airline_name,
+	# 		"_id": self._id,
+	# 		"price": self.price,
+	# 		"dates": self.dates
+	# 	}
 	def json(self):
-		return {
-			"plane_no": self.plane_no,
-			"source": self.source,
-			"destination": self.destination,
-			"plane_timing": self.plane_timing,
-			"total_seats": self.total_seats,
-			"seats_booked": self.seats_booked,
-			"airline_name": self.airline_name,
-			"_id": self._id,
-			"price": self.price,
-			"dates": self.dates
-		}
+			return {
+				"location": self.location,
+				"event_time": self.event_time,
+				"total_seats": self.total_seats,
+				"seats_booked": self.seats_booked,
+				"event_name": self.event_name,
+				"_id": self._id,
+				"price": self.price,
+				"dates": self.dates
+			}
 
 	@classmethod
 	def get_by_id(cls, item_id):

@@ -2,8 +2,8 @@
 <html>
 
 <head>
-    <title>TA | Flights</title>
-    <link rel="shortcut icon" type="img/png" href="{{ url_for('static', filename='img/travel_logo.png') }}">
+    <title>Events</title>
+    <!-- <link rel="shortcut icon" type="img/png" href="{{ url_for('static', filename='img/travel_logo.png') }}"> -->
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
@@ -22,14 +22,14 @@
                     <span class="icon-bar"></span>
                 </button>
                 <a href="{{ url_for('home') }}" class="navbar-brand">
-            <img src="{{ url_for('static', filename='img/travel_logo.png') }}" alt="Brand" height="20" width="20">
+            <!-- <img src="{{ url_for('static', filename='img/travel_logo.png') }}" alt="Brand" height="20" width="20"> -->
           </a>
-                <a class="navbar-brand" href="{{ url_for('home') }}">Travel Advisor</a>
+                <a class="navbar-brand" href="{{ url_for('home') }}">Trip Planner</a>
             </div>
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li><a href="{{ url_for('hotels.index') }}">Hotels</a></li>
-                    <li class="active"><a href="{{ url_for('flights.index') }}">Flights</a></li>
+                    <li class="active"><a href="{{ url_for('flights.index') }}">Events</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li><a href="{{ url_for('home') }}">Home</a></li>
@@ -54,16 +54,15 @@
         {% for flight in flights %}
         <div class="panel panel-info">
             <div class="panel-heading">
-                <h3 align="center" class="list-group-item-heading">{{ flight.plane_no }} <small> (Flight name)</small></h3>
+                <h3 align="center" class="list-group-item-heading">{{ flight.event_name }} <small> (Flight name)</small></h3>
             </div>
             <div class="panel-body">
-                <p align="center" class="list-group-item-text">Source: {{ flight.source }}</p>
-                <p align="center" class="list-group-item-text">Destination: {{ flight.destination }}</p>
-                <p align="center" class="list-group-item-text">Plane Timing: {{ flight.plane_timing }}</p>
+                <p align="center" class="list-group-item-text">Location: {{ flight.location }}</p>
+                <p align="center" class="list-group-item-text">Event Timing: {{ flight.event_time }}</p>
                 <p align="center" class="list-group-item-text">Total Seats: {{ flight.total_seats }}</p>
                 <p align="center" class="list-group-item-text">Seats Booked: {{ flight.seats_booked }}</p>
-                <p align="center" class="list-group-item-text">Airline Name: {{ flight.airline_name }}</p>
-                <p align="center" class="list-group-item-text">Cost: Rs.{{ flight.price }}</p>
+                <p align="center" class="list-group-item-text">Event Name: {{ flight.event_name }}</p>
+                <p align="center" class="list-group-item-text">Cost: Euro.{{ flight.price }}</p>
                 <br> 
                 {% if session['email'] %}
                 <div align="center"><a class="btn btn-info" href="{{ url_for('flights.flight_book', flight_id = flight._id) }}">Book</a></div>
