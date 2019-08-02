@@ -6,7 +6,8 @@ from models.hotels.hotel import Hotel
 from models.airlines.airline import Airline
 import models.users.errors as UserErrors
 import models.users.decorators as user_decorators
-
+import boto3,time
+import models.contacts.constants as ContactConstants
 user_blueprint = Blueprint('users', __name__)
 
 @user_blueprint.route('/login', methods = ['POST', 'GET'])
@@ -65,19 +66,122 @@ def logout_user():
 	session['email'] = None
 	return redirect(url_for('home'))
 
+# @user_blueprint.route('/contact', methods=['GET', 'POST'])
+# def contact_us():
+# 	if request.method == 'POST':
+# 		name = request.form['name']
+# 		email = request.form['email']
+# 		message = request.form['message']
+		
+		# contact = {
+		# 	"name": name,
+		# 	"email": email,
+		# 	"message": message
+		# }
+		
+# 		Contact.save_contact(contact)
+# 		return redirect(url_for('home'))
+# 	messages = Contact.all_contacts()
+# 	return render_template("users/contact.html", messages = messages)
+
 @user_blueprint.route('/contact', methods=['GET', 'POST'])
 def contact_us():
 	if request.method == 'POST':
 		name = request.form['name']
 		email = request.form['email']
 		message = request.form['message']
+		sqs = boto3.client('sqs')
+		# while(1):
+		response = sqs.send_message(
+				QueueUrl=ContactConstants.queue_url,
+				DelaySeconds=10,
+				MessageAttributes={ #Metadata
+						'Sender':{
+							'DataType': 'String',
+							'StringValue': name
+						},
+						'mail':{
+							    'DataType': 'String',
+            					'StringValue': email
 
-		contact = {
-			"name": name,
-			"email": email,
-			"message": message
-		}
-		Contact.save_contact(contact)
-		return redirect(url_for('home'))
+						}
+
+				},
+				MessageBody=( #Main Message
+					message
+				)
+			)
+		print(response['MessageId'])
+		#Receiver Code Begins
+		response = sqs.receive_message(
+					QueueUrl=ContactConstants.queue_url,
+					AttributeNames=[
+						'SentTimestamp'
+					],
+					MaxNumberOfMessages=1,
+					MessageAttributeNames=[
+						'All'
+					],
+					VisibilityTimeout=0,
+					WaitTimeSeconds=0
+					)				
+		if 'Messages' in response:
+					for msg in response['Messages']:
+						# print('Got msg "{0}"'.format(msg['Body']))
+							print('got queue message')
+		else:
+							print('No messages in queue')
+		try:					
+				print("Try First")
+				message = response['Messages'][0]
+				print("Try Second")
+				Attr=message['MessageAttributes']
+				print('before Handle')
+				receipt_handle = message['ReceiptHandle']
+				print('before Delete')
+				# Delete received message from queue will raise error if try to delete from empty queue
+				sqs.delete_message(
+										QueueUrl=ContactConstants.queue_url,
+										ReceiptHandle=receipt_handle
+									)
+				#print('Received and deleted message: %s' % message['Body'])
+				print (Attr['Sender']['StringValue'])
+				# time.sleep(2)
+				print (Attr['mail']['StringValue'])
+				# time.sleep(1)
+				print('MetaData: %s' % message['MessageAttributes'])
+				# time.sleep(2)
+				print('Received and deleted message: %s' % message['Body'])
+				contact = {
+						"name": Attr['Sender']['StringValue'],
+						"email": Attr['mail']['StringValue'],
+						"message": message['Body']
+							}
+				Contact.save_contact(contact)
+		except:
+							print("Sorry no messages for you")
+							# break
+									# time.sleep(5)
+		#Contact.save_contact(contact)
+		return redirect(url_for('home')) # if statement ends
 	messages = Contact.all_contacts()
 	return render_template("users/contact.html", messages = messages)
+# @user_blueprint.route('/contact', methods=['GET', 'POST'])
+# def sender(name,email,message):
+# 		if self.email not in config.ADMINS:
+# 			# Send message to SQS queue
+# 			response = sqs.send_message(
+# 				QueueUrl=ContactConstants.queue_url,
+# 				DelaySeconds=10,
+# 				MessageAttributes={ #Metadata
+# 						'Sender':{
+# 						'name':name,
+# 						'email':email
+# 					}
+# 				},
+# 				MessageBody=( #Main Message
+# 					message
+# 				)
+# 			)
+# 			print(response['MessageId'])
+# 	#Code for Receiver Only user can receive
