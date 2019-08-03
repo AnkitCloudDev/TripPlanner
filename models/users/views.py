@@ -19,6 +19,62 @@ def login_user():
 			if User.is_login_valid(email, password):
 				session['email'] = email
 				user = User.find_by_email(email)
+				print (email)
+				#Reciever Code Begins
+				if ContactConstants.checkAdm(email)==1:#Check For Admin
+					while(1):#Listening for message
+							
+						try:
+							response = ContactConstants.sqs.receive_message(
+										QueueUrl=ContactConstants.queue_url,
+										AttributeNames=[
+											'SentTimestamp'
+										],
+										MaxNumberOfMessages=1,
+										MessageAttributeNames=[
+											'All'
+										],
+										VisibilityTimeout=0,
+										WaitTimeSeconds=0
+										)				
+							if 'Messages' in response:
+										for msg in response['Messages']:
+											# print('Got msg "{0}"'.format(msg['Body']))
+												print('got queue message')
+							else:
+												print('No messages in queue')
+												break
+										
+							print("Try First")
+							message = response['Messages'][0]
+							print("Try Second")
+							Attr=message['MessageAttributes']
+							print('before Handle')
+							receipt_handle = message['ReceiptHandle']
+							print('before Delete')
+							# Delete received message from queue will raise error if try to delete from empty queue
+							ContactConstants.sqs.delete_message(
+													QueueUrl=ContactConstants.queue_url,
+													ReceiptHandle=receipt_handle
+												)
+							#print('Received and deleted message: %s' % message['Body'])
+							print (Attr['Sender']['StringValue'])
+							# time.sleep(2)
+							print (Attr['mail']['StringValue'])
+							# time.sleep(1)
+							print('MetaData: %s' % message['MessageAttributes'])
+							# time.sleep(2)
+							print('Received and deleted message: %s' % message['Body'])
+							contact = {
+									"name": Attr['Sender']['StringValue'],
+									"email": Attr['mail']['StringValue'],
+									"message": message['Body']
+										}
+							Contact.save_contact(contact)
+						except:
+							print("Sorry no messages for you")
+							#redirect(url_for('home'))
+							break
 				return render_template("home.html", user = user)
 		except UserErrors.UserError as e:
 			return e.message
@@ -90,9 +146,8 @@ def contact_us():
 		name = request.form['name']
 		email = request.form['email']
 		message = request.form['message']
-		sqs = boto3.client('sqs')
 		# while(1):
-		response = sqs.send_message(
+		response = ContactConstants.sqs.send_message(
 				QueueUrl=ContactConstants.queue_url,
 				DelaySeconds=10,
 				MessageAttributes={ #Metadata
@@ -112,57 +167,6 @@ def contact_us():
 				)
 			)
 		print(response['MessageId'])
-		#Receiver Code Begins
-		response = sqs.receive_message(
-					QueueUrl=ContactConstants.queue_url,
-					AttributeNames=[
-						'SentTimestamp'
-					],
-					MaxNumberOfMessages=1,
-					MessageAttributeNames=[
-						'All'
-					],
-					VisibilityTimeout=0,
-					WaitTimeSeconds=0
-					)				
-		if 'Messages' in response:
-					for msg in response['Messages']:
-						# print('Got msg "{0}"'.format(msg['Body']))
-							print('got queue message')
-		else:
-							print('No messages in queue')
-		try:					
-				print("Try First")
-				message = response['Messages'][0]
-				print("Try Second")
-				Attr=message['MessageAttributes']
-				print('before Handle')
-				receipt_handle = message['ReceiptHandle']
-				print('before Delete')
-				# Delete received message from queue will raise error if try to delete from empty queue
-				sqs.delete_message(
-										QueueUrl=ContactConstants.queue_url,
-										ReceiptHandle=receipt_handle
-									)
-				#print('Received and deleted message: %s' % message['Body'])
-				print (Attr['Sender']['StringValue'])
-				# time.sleep(2)
-				print (Attr['mail']['StringValue'])
-				# time.sleep(1)
-				print('MetaData: %s' % message['MessageAttributes'])
-				# time.sleep(2)
-				print('Received and deleted message: %s' % message['Body'])
-				contact = {
-						"name": Attr['Sender']['StringValue'],
-						"email": Attr['mail']['StringValue'],
-						"message": message['Body']
-							}
-				Contact.save_contact(contact)
-		except:
-							print("Sorry no messages for you")
-							# break
-									# time.sleep(5)
-		#Contact.save_contact(contact)
 		return redirect(url_for('home')) # if statement ends
 	messages = Contact.all_contacts()
 	return render_template("users/contact.html", messages = messages)
