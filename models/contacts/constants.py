@@ -2,7 +2,8 @@ import boto3
 import config
 CONTACT = "contact"
 queue_url = 'https://sqs.eu-west-1.amazonaws.com/447123079606/trip'
-sqs = boto3.client('sqs')
+sqs = boto3.client('sqs') #Specifying that we are using SQS service
+#Code to Check for ADMIN user
 def checkAdm(x):
     flag=0
     for v in config.ADMINS:

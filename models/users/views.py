@@ -24,10 +24,10 @@ def login_user():
 				if ContactConstants.checkAdm(email)==1:#Check For Admin
 					while(1):#Listening for message
 							
-						try:
+						try: #Retrieving Message can cause Errors Hence we try to handle it for smooth exec of program
 							response = ContactConstants.sqs.receive_message(
-										QueueUrl=ContactConstants.queue_url,
-										AttributeNames=[
+										QueueUrl=ContactConstants.queue_url, #queue url for identiying queue
+										AttributeNames=[	#Metadata
 											'SentTimestamp'
 										],
 										MaxNumberOfMessages=1,
@@ -37,44 +37,44 @@ def login_user():
 										VisibilityTimeout=0,
 										WaitTimeSeconds=0
 										)				
-							if 'Messages' in response:
+							if 'Messages' in response: #Checking for Messages
 										for msg in response['Messages']:
 											# print('Got msg "{0}"'.format(msg['Body']))
 												print('got queue message')
 							else:
 												print('No messages in queue')
 												break
-										
+							
 							print("Try First")
-							message = response['Messages'][0]
+							message = response['Messages'][0] # Storing 1st message from response in message
 							print("Try Second")
-							Attr=message['MessageAttributes']
+							Attr=message['MessageAttributes'] # Retrieving metadata from message 
 							print('before Handle')
-							receipt_handle = message['ReceiptHandle']
+							receipt_handle = message['ReceiptHandle'] #Receit Handle is generated on receipt of program and is needed for deleting
 							print('before Delete')
 							# Delete received message from queue will raise error if try to delete from empty queue
-							ContactConstants.sqs.delete_message(
+							ContactConstants.sqs.delete_message(	#Deleting Messages
 													QueueUrl=ContactConstants.queue_url,
 													ReceiptHandle=receipt_handle
 												)
 							#print('Received and deleted message: %s' % message['Body'])
-							print (Attr['Sender']['StringValue'])
+							print (Attr['Sender']['StringValue'])	#Printing Sender Name from Metadata
 							# time.sleep(2)
-							print (Attr['mail']['StringValue'])
+							print (Attr['mail']['StringValue'])		#Printing Email from Metadata
 							# time.sleep(1)
 							print('MetaData: %s' % message['MessageAttributes'])
 							# time.sleep(2)
-							print('Received and deleted message: %s' % message['Body'])
+							print('Received and deleted message: %s' % message['Body']) #Printing Message 
 							contact = {
-									"name": Attr['Sender']['StringValue'],
+									"name": Attr['Sender']['StringValue'], 
 									"email": Attr['mail']['StringValue'],
 									"message": message['Body']
 										}
-							Contact.save_contact(contact)
+							Contact.save_contact(contact) #Saving to DB
 						except:
-							print("Sorry no messages for you")
+							print("Sorry no messages for you") #No message Found
 							#redirect(url_for('home'))
-							break
+							break #Exit loop
 				return render_template("home.html", user = user)
 		except UserErrors.UserError as e:
 			return e.message
@@ -122,33 +122,15 @@ def logout_user():
 	session['email'] = None
 	return redirect(url_for('home'))
 
-# @user_blueprint.route('/contact', methods=['GET', 'POST'])
-# def contact_us():
-# 	if request.method == 'POST':
-# 		name = request.form['name']
-# 		email = request.form['email']
-# 		message = request.form['message']
-		
-		# contact = {
-		# 	"name": name,
-		# 	"email": email,
-		# 	"message": message
-		# }
-		
-# 		Contact.save_contact(contact)
-# 		return redirect(url_for('home'))
-# 	messages = Contact.all_contacts()
-# 	return render_template("users/contact.html", messages = messages)
-
 @user_blueprint.route('/contact', methods=['GET', 'POST'])
 def contact_us():
 	if request.method == 'POST':
 		name = request.form['name']
 		email = request.form['email']
 		message = request.form['message']
-		# while(1):
-		response = ContactConstants.sqs.send_message(
-				QueueUrl=ContactConstants.queue_url,
+		#  Sending Code Begins
+		response = ContactConstants.sqs.send_message( #Sending Message
+				QueueUrl=ContactConstants.queue_url, #Queue URL
 				DelaySeconds=10,
 				MessageAttributes={ #Metadata
 						'Sender':{
@@ -170,22 +152,3 @@ def contact_us():
 		return redirect(url_for('home')) # if statement ends
 	messages = Contact.all_contacts()
 	return render_template("users/contact.html", messages = messages)
-# @user_blueprint.route('/contact', methods=['GET', 'POST'])
-# def sender(name,email,message):
-# 		if self.email not in config.ADMINS:
-# 			# Send message to SQS queue
-# 			response = sqs.send_message(
-# 				QueueUrl=ContactConstants.queue_url,
-# 				DelaySeconds=10,
-# 				MessageAttributes={ #Metadata
-# 						'Sender':{
-# 						'name':name,
-# 						'email':email
-# 					}
-# 				},
-# 				MessageBody=( #Main Message
-# 					message
-# 				)
-# 			)
-# 			print(response['MessageId'])
-# 	#Code for Receiver Only user can receive
