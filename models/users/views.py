@@ -1,4 +1,5 @@
 from flask import Blueprint, request, session, url_for, render_template, redirect
+import requests
 from werkzeug.utils import redirect
 from models.contacts.contact import Contact
 from models.users.user import User
@@ -8,6 +9,7 @@ import models.users.errors as UserErrors
 import models.users.decorators as user_decorators
 import boto3,time
 import models.contacts.constants as ContactConstants
+import json
 user_blueprint = Blueprint('users', __name__)
 
 @user_blueprint.route('/login', methods = ['POST', 'GET'])
@@ -118,8 +120,17 @@ def register_user():
 @user_blueprint.route('/dashboard')
 def user_dashboard():
 	user = User.find_by_email(session['email'])
+	response=requests.get("https://pacific-taiga-19477.herokuapp.com/trips/1")#WE are fetching trips thru REST API
+	# print("....")
+	# print(response.json())
+	json_obj=response.json()
+	print(json_obj['result'])
+	disp=json_obj['result'][0]['destination']
+	res=requests.get("https://pacific-taiga-19477.herokuapp.com/events/1")#we are fetching events from here 
+	print("....")
+	print(res.json())
 	contents = user.get_contents()
-	return render_template('users/dashboard.html', contents=contents)
+	return render_template('users/dashboard.html', contents=contents, response=response.json(), res=res.json())
 
 @user_blueprint.route('/logout')
 def logout_user():
