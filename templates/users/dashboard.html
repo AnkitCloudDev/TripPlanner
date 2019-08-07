@@ -32,7 +32,7 @@
                     {% if contents.user_type != 'airline' %}
                     <li><a href="{{ url_for('hotels.index') }}">Hotels</a></li>
                     {% if session['email'] in config.ADMINS %}
-                    <li><a href="{{ url_for('airlines.index') }}">Airlines</a></li>
+                    <li><a href="{{ url_for('airlines.index') }}">Event</a></li>
                     {% endif %} 
                     {% endif %} 
                     {% endif %} 
