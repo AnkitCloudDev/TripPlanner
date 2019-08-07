@@ -51,12 +51,9 @@ def login_user():
 							Attr=message['MessageAttributes'] # Retrieving metadata from message 
 							print('before Handle')
 							receipt_handle = message['ReceiptHandle'] #Receit Handle is generated on receipt of program and is needed for deleting
-							print('before Delete')
+							#print('before Delete')
 							# Delete received message from queue will raise error if try to delete from empty queue
-							ContactConstants.sqs.delete_message(	#Deleting Messages
-													QueueUrl=ContactConstants.queue_url,
-													ReceiptHandle=receipt_handle
-												)
+							
 							#print('Received and deleted message: %s' % message['Body'])
 							print (Attr['Sender']['StringValue'])	#Printing Sender Name from Metadata
 							# time.sleep(2)
@@ -70,7 +67,14 @@ def login_user():
 									"email": Attr['mail']['StringValue'],
 									"message": message['Body']
 										}
+							print("Before Saving")
 							Contact.save_contact(contact) #Saving to DB
+							print("After Save to DB")
+							ContactConstants.sqs.delete_message(	#Deleting Messages only after it is saved to DB
+													QueueUrl=ContactConstants.queue_url,
+													ReceiptHandle=receipt_handle
+												)
+							print("Message Deleted")
 						except:
 							print("Sorry no messages for you") #No message Found
 							#redirect(url_for('home'))
@@ -131,7 +135,7 @@ def contact_us():
 		#  Sending Code Begins
 		response = ContactConstants.sqs.send_message( #Sending Message
 				QueueUrl=ContactConstants.queue_url, #Queue URL
-				DelaySeconds=10,
+				DelaySeconds=5,
 				MessageAttributes={ #Metadata
 						'Sender':{
 							'DataType': 'String',

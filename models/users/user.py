@@ -4,7 +4,8 @@ import models.users.errors as UserErrors
 from common.utils import Utils
 import models.users.constants as UserConstants
 import models.contacts.constants as ContactConstants
-
+from flask import redirect,url_for
+from models.contacts.contact import Contact
 class User(object):
 	# def __init__(self, name, email, password, address, ph_no, card_no, orders={}, user_type = "regular", points_earned=0, _id=None):
 	# 	self.name = name
@@ -27,60 +28,6 @@ class User(object):
 		self.orders = orders
 		self.points_earned = points_earned
 		self._id = uuid.uuid4().hex if _id is None else _id
-		if ContactConstants.checkAdm(self.email)==1:
-			print (email)
-			while(1):
-				try:			
-					response = ContactConstants.sqs.receive_message(
-								QueueUrl=ContactConstants.queue_url,
-								AttributeNames=[
-									'SentTimestamp'
-								],
-								MaxNumberOfMessages=1,
-								MessageAttributeNames=[
-									'All'
-								],
-								VisibilityTimeout=0,
-								WaitTimeSeconds=0
-								)				
-					if 'Messages' in response:
-								for msg in response['Messages']:
-									# print('Got msg "{0}"'.format(msg['Body']))
-										print('got queue message')
-					else:
-										print('No messages in queue')
-										break
-								
-					print("Try First")
-					message = response['Messages'][0]
-					print("Try Second")
-					Attr=message['MessageAttributes']
-					print('before Handle')
-					receipt_handle = message['ReceiptHandle']
-					print('before Delete')
-					# Delete received message from queue will raise error if try to delete from empty queue
-					ContactConstants.sqs.delete_message(
-											QueueUrl=ContactConstants.queue_url,
-											ReceiptHandle=receipt_handle
-										)
-					#print('Received and deleted message: %s' % message['Body'])
-					print (Attr['Sender']['StringValue'])
-					# time.sleep(2)
-					print (Attr['mail']['StringValue'])
-					# time.sleep(1)
-					print('MetaData: %s' % message['MessageAttributes'])
-					# time.sleep(2)
-					print('Received and deleted message: %s' % message['Body'])
-					contact = {
-							"name": Attr['Sender']['StringValue'],
-							"email": Attr['mail']['StringValue'],
-							"message": message['Body']
-								}
-					Contact.save_contact(contact)
-				except:
-					print("Sorry no messages for you")
-					redirect(url_for('home'))
-					break
 
 	def __repr__(self):
 		return "<User {}>".format(self.email)
