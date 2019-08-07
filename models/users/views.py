@@ -126,11 +126,15 @@ def user_dashboard():
 	json_obj=response.json()
 	print(json_obj['result'])
 	disp=json_obj['result'][0]['destination']
+	print(disp)
 	res=requests.get("https://pacific-taiga-19477.herokuapp.com/events/1")#we are fetching events from here 
 	print("....")
 	print(res.json())
+	res_n=res.json()
+	res_ns=res_n['events'][0]['event_name']
+	print(res_ns)
 	contents = user.get_contents()
-	return render_template('users/dashboard.html', contents=contents, response=response.json(), res=res.json())
+	return render_template('users/dashboard.html', contents=contents, response=disp, res=res_ns)
 
 @user_blueprint.route('/logout')
 def logout_user():
