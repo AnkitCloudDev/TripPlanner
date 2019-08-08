@@ -134,7 +134,7 @@ def user_dashboard():
 	res_ns=res_n['events'][0]['event_name']
 	print(res_ns)
 	contents = user.get_contents()
-	return render_template('users/dashboard.html', contents=contents, response=disp, res=res_ns)
+	return render_template('users/dashboard.html', contents=contents, response=json_obj, res=res.json())
 
 @user_blueprint.route('/logout')
 def logout_user():
