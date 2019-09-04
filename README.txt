@@ -1,3 +1,4 @@
+*****************Steps to Run this application are provided in README.MD FILE**********************
 STEPS FOR DEPLOYING THE APPLICATION ON HEROKU
 *****You need to be logged in gitcli and herokucli before we start********
 1.OPEN CMD/POWERSHELL(WINDOWS) OR TERMINAL (linux)

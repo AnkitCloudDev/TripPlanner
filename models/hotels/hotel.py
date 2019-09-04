@@ -4,20 +4,6 @@ import models.hotels.constants as HotelConstants
 import models.hotels.errors as UserErrors
 
 class Hotel(object):
-	# def __init__(self, name, email, password, address, ph_no, card_no, total_rooms, rooms_booked, price, dates={}, bank_balance = 0, user_type = "hotel", _id = None):
-	# 	self.name = name
-	# 	self.email = email
-	# 	self.password = password
-	# 	self.address = address
-	# 	self.ph_no = ph_no
-	# 	self.card_no = card_no
-	# 	self.bank_balance = float(bank_balance)
-	# 	self.total_rooms = int(total_rooms)
-	# 	self.rooms_booked = int(rooms_booked)
-	# 	self.price = float(price)
-	# 	self.user_type = user_type
-	# 	self.dates = dates
-	# 	self._id = uuid.uuid4().hex if _id is None else _id
 	def __init__(self, name, email, password, address, ph_no, total_rooms, rooms_booked, price, dates={}, bank_balance = 0, user_type = "hotel", _id = None):
 		self.name = name
 		self.email = email
@@ -34,22 +20,6 @@ class Hotel(object):
 	def __repr__(self):
 		return "<Hotel: {}>".format(self.name)
 
-	# def json(self):
-	# 	return{
-	# 		"_id": self._id,
-	# 		"name": self.name,
-	# 		"email": self.email,
-	# 		"password": self.password,
-	# 		"address": self.address,
-	# 		"ph_no": self.ph_no,
-	# 		"card_no": self.card_no,
-	# 		"bank_balance": self.bank_balance,
-	# 		"total_rooms": self.total_rooms,
-	# 		"rooms_booked": self.rooms_booked,
-	# 		"price": self.price,
-	# 		"user_type": self.user_type,
-	# 		"dates": self.dates
-	# 	}
 	def json(self):
 		return{
 			"_id": self._id,
@@ -92,19 +62,6 @@ class Hotel(object):
 	def get_price(self):
 		return self.price
 
-	# def get_contents(self):
-	# 	return {
-	# 		"name": self.name,
-	# 		"email": self.email,
-	# 		"address": self.address,
-	# 		"ph_no": self.ph_no,
-	# 		"card_no": self.card_no,
-	# 		"bank_balance": self.bank_balance,
-	# 		"total_rooms": self.total_rooms,
-	# 		"rooms_booked": self.rooms_booked,
-	# 		"price": self.price,
-	# 		"user_type": self.user_type
-	# 	}
 	def get_contents(self):
 		return {
 			"name": self.name,

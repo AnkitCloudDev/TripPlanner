@@ -23,18 +23,7 @@ def delete_airline(airline_id):
 
 @airline_blueprint.route('/new', methods=['GET', 'POST'])
 @user_decorators.requires_admin_permissions
-# def create_airline():
-# 	if request.method == 'POST':
-# 		name = request.form['name']
-# 		email = request.form['email']
-# 		password = request.form['password']
-# 		address = request.form['address']
-# 		ph_no = request.form['ph_no']
-# 		card_no = request.form['card_no']
 
-# 		Airline(name, email, password, address, ph_no, card_no).save_to_mongo()
-# 		return redirect(url_for('.index'))
-# 	return render_template('airlines/new_airline.html')
 def create_airline():
 	if request.method == 'POST':
 		name = request.form['name']
